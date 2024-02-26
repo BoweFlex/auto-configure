@@ -82,6 +82,7 @@
           - zsh # Better terminal
           - vim 
           - neovim # More powerful vim
+          - npm # Needed for mason.nvim
           - i3 # Window Manager
           - tmux # multiplexer for ssh and file editing
           - fzf # Fuzzy finder, using for tmux
