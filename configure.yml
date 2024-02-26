@@ -63,7 +63,7 @@
         - { package: "alacritty", target: "{{ lookup('env', 'HOME') }}/.config/alacritty/" }
         - { package: "picom", target: "{{ lookup('env', 'HOME') }}/.config/picom/" }
         - { package: "tmux", target: "{{ lookup('env', 'HOME') }}" }
-        - { package: "fonts", target: "{{ lookup('env', 'HOME') }}" }
+        - { package: "fonts", target: "{{ lookup('env', 'HOME') }}/.fonts" }
       tags:
         - dotfiles
 
