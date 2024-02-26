@@ -1,0 +1,138 @@
+---
+
+- hosts: localhost
+  become: yes
+  vars:
+    user_name: jbowe
+    keys:
+      - name: "boweflex_ed25519"
+        mode: "0600"
+      - name: "boweflex_ed25519.pub"
+        mode: "0644"
+    key_source: "./.ssh"
+    key_dest: "{{ lookup('env', 'HOME') }}/.ssh"
+  tasks:
+
+    - name: SSH installation
+      block:
+        - name: Create ssh directory
+          file:
+            dest: "{{ key_dest }}"
+            state: directory
+            mode: 0700
+
+        - name: Install ssh key
+          copy:
+            src: "{{ key_source }}/{{ item.name }}"
+            dest: "{{ key_dest }}"
+            mode: "{{ item.mode }}"
+          loop: "{{ keys }}"
+      tags:
+        - dotfiles
+        - ssh 
+
+    - name: Ensure prereqs are installed
+      package:
+        name:
+          - git
+          - software-properties-common
+          - python3-apt
+          - gpg
+          - stow
+        state: present
+      tags:
+        - dotfiles
+
+    - name: Pull down dotfiles and subdirectories
+      become_user: "{{ user_name }}"
+      git:
+        repo: git@github.com:BoweFlex/.dotfiles.git
+        version: main
+        dest: "{{ lookup('env', 'HOME') }}/.dotfiles"
+        recursive: yes
+        update: yes
+        accept_hostkey: yes
+      tags:
+        - dotfiles
+
+    - name: Stow config files
+      shell: "stow {{ item.package }} -d {{ lookup('env', 'HOME') }}/.dotfiles -t {{ item.target }}"
+      loop:
+        - { package: "zsh", target: "{{ lookup('env', 'HOME') }}" }
+        - { package: "nvim", target: "{{ lookup('env', 'HOME') }}" }
+        - { package: "alacritty", target: "{{ lookup('env', 'HOME') }}/.config/alacritty/" }
+        - { package: "picom", target: "{{ lookup('env', 'HOME') }}/.config/picom/" }
+        - { package: "tmux", target: "{{ lookup('env', 'HOME') }}" }
+        - { package: "fonts", target: "{{ lookup('env', 'HOME') }}" }
+      tags:
+        - dotfiles
+
+    - name: Add ppa repo for neovim unstable
+      apt_repository:
+        repo: ppa:neovim-ppa/unstable
+
+    - name: Update apt repositories
+      package:
+        name: "*"
+        state: latest
+
+    - name: Install other packages
+      package:
+        name:
+          - zsh # Better terminal
+          - vim 
+          - neovim # More powerful vim
+          - i3 # Window Manager
+          - tmux # multiplexer for ssh and file editing
+          - fzf # Fuzzy finder, using for tmux
+          - feh # Wallpaper handler for i3
+          - alacritty # Prettier terminal
+          - picom # Compositor for i3, needed for window transparency
+          - pass # SRE Password manager
+          - ripgrep # required for telescope.nvim
+          - clamav
+          - clamav-daemon
+          - podman
+          - python3-pip
+          - ansible-lint
+            # - vault
+          - python3-venv
+          - remmina
+          - cheese
+          - krb5-user
+          - libkrb5-dev
+          - python3-dev
+          - python3.10-venv
+
+    # This fails on rerun because it already exists
+#    - name: Install oh-my-zsh
+#      shell: 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"'
+
+    - name: Install oh-my-zsh
+      git:
+        repo: https://github.com/ohmyzsh/ohmyzsh.git
+        dest: ~/.oh-my-zsh
+        depth: 1
+
+    - name: Change user's shell to zsh
+      user:
+        name: "{{ user_name }}"
+        shell: /usr/bin/zsh
+
+    - name: Install golang
+      vars:
+        version: 1.22.0
+      block:
+        - name: Remove existing installation
+          command: rm -rf /usr/local/go
+
+        - name: Download go tar file
+          command: wget https://go.dev/dl/go{{version}}.linux-amd64.tar.gz
+
+        - name: Extract and move new go folder to /usr/local
+          command: tar -C /usr/local -xzf go{{version}}.linux-amd64.tar.gz
+          become: true
+
+        - name: Delete downloaded tar file
+          shell: rm -rf go{{version}}.linux-amd64.tar.gz*
+
