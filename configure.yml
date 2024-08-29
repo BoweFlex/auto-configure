@@ -3,6 +3,7 @@
 - hosts: localhost
   become: yes
   vars:
+    go_version: 1.22.0
     user_name: jbowe
     keys:
       - name: "boweflex_ed25519"
@@ -14,6 +15,7 @@
   tasks:
 
     - name: SSH installation
+      become_user: "{{ user_name }}"
       block:
         - name: Create ssh directory
           file:
@@ -27,6 +29,11 @@
             dest: "{{ key_dest }}"
             mode: "{{ item.mode }}"
           loop: "{{ keys }}"
+
+        - name: Copy config file
+          copy:
+            src: "{{ key_source }}/config"
+            dest: "{{ key_dest }}"
       tags:
         - dotfiles
         - ssh 
@@ -55,17 +62,29 @@
       tags:
         - dotfiles
 
-    - name: Stow config files
-      shell: "stow {{ item.package }} -d {{ lookup('env', 'HOME') }}/.dotfiles -t {{ item.target }}"
-      loop:
-        - { package: "zsh", target: "{{ lookup('env', 'HOME') }}" }
-        - { package: "nvim", target: "{{ lookup('env', 'HOME') }}" }
-        - { package: "alacritty", target: "{{ lookup('env', 'HOME') }}/.config/alacritty/" }
-        - { package: "picom", target: "{{ lookup('env', 'HOME') }}/.config/picom/" }
-        - { package: "tmux", target: "{{ lookup('env', 'HOME') }}" }
-        - { package: "fonts", target: "{{ lookup('env', 'HOME') }}/.fonts" }
-      tags:
-        - dotfiles
+    - name: Stow configuration block
+      become_user: "{{ user_name }}"
+      block:
+        - name: Create directories for config files
+          file:
+            path: "{{ item }}"
+            state: directory
+          loop:
+            - "{{ lookup('env', 'HOME') }}/.fonts"
+            - "{{ lookup('env', 'HOME') }}/.config/alacritty"
+            - "{{ lookup('env', 'HOME') }}/.config/picom"
+
+        - name: Stow config files
+          shell: "stow {{ item.package }} -d {{ lookup('env', 'HOME') }}/.dotfiles -t {{ item.target }}"
+          loop:
+            - { package: "zsh", target: "{{ lookup('env', 'HOME') }}" }
+            - { package: "nvim", target: "{{ lookup('env', 'HOME') }}" }
+            - { package: "alacritty", target: "{{ lookup('env', 'HOME') }}/.config/alacritty/" }
+            - { package: "picom", target: "{{ lookup('env', 'HOME') }}/.config/picom/" }
+            - { package: "tmux", target: "{{ lookup('env', 'HOME') }}" }
+            - { package: "fonts", target: "{{ lookup('env', 'HOME') }}/.fonts" }
+          tags:
+            - dotfiles
 
     - name: Add ppa repo for neovim unstable
       apt_repository:
@@ -105,14 +124,11 @@
           - python3-dev
           - python3.10-venv
 
-    # This fails on rerun because it already exists
-#    - name: Install oh-my-zsh
-#      shell: 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"'
-
     - name: Install oh-my-zsh
+      become_user: "{{ user_name }}"
       git:
         repo: https://github.com/ohmyzsh/ohmyzsh.git
-        dest: ~/.oh-my-zsh
+        dest: "{{ lookup('env', 'HOME') }}/.oh-my-zsh"
         depth: 1
 
     - name: Change user's shell to zsh
@@ -120,20 +136,34 @@
         name: "{{ user_name }}"
         shell: /usr/bin/zsh
 
-    - name: Install golang
-      vars:
-        version: 1.22.0
+    - name: Check if golang is installed
+      stat:
+        path: /usr/local/go/VERSION
+      register: version_file
+
+    - name: Block to check if golang is correct version
       block:
-        - name: Remove existing installation
+        - name: Read file contents
+          set_fact: 
+            contents: "{{ lookup('ansible.builtin.file', '/usr/local/go/VERSION') }}"
+        - name: Check if version matches var
+          set_fact: go_correct_version={{ contents | regex_findall(go_version) | first }}
+          ignore_errors: yes # This fails if the correct version is not found, which is expected
+      when: version_file.stat.exists
+
+    - name: Block - Install golang if not already up to date
+      block:
+        - name: Remove existing go installation
           command: rm -rf /usr/local/go
 
         - name: Download go tar file
-          command: wget https://go.dev/dl/go{{version}}.linux-amd64.tar.gz
+          command: wget https://go.dev/dl/go{{go_version}}.linux-amd64.tar.gz
 
         - name: Extract and move new go folder to /usr/local
-          command: tar -C /usr/local -xzf go{{version}}.linux-amd64.tar.gz
+          command: tar -C /usr/local -xzf go{{go_version}}.linux-amd64.tar.gz
           become: true
 
-        - name: Delete downloaded tar file
-          shell: rm -rf go{{version}}.linux-amd64.tar.gz*
+        - name: Delete downloaded go tar file
+          shell: rm -rf go{{go_version}}.linux-amd64.tar.gz*
+      when: go_correct_version is not defined or not version_file.stat.exists 
 

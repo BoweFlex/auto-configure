@@ -16,3 +16,4 @@ This project should allow a relatively short list of steps for setup.
 Most, if not all of these steps, are pretty specific to my needs and configuration. You are more than welcome to fork and adjust this to your own needs, but I make no guarantees that it will work for other usernames etc without any adjustment.
 
 I tried to make sure that most of the ansible modules being used would work regardless of the linux flavor being used, however at this time this has only been tested on Pop!_OS.
+
