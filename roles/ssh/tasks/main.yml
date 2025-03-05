@@ -1,0 +1,10 @@
+---
+
+- name: SSH installation
+  become_user: "{{ user_name }}"
+  ansible.builtin.import_tasks: ssh.yml
+  tags:
+    - dotfiles
+    - ssh 
+
+...

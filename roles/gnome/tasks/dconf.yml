@@ -1,0 +1,12 @@
+---
+
+- name: Ensure prereqs are Installed
+  ansible.builtin.package:
+    name:
+      - dconf
+      - dbus
+      - dbus-tools
+      - python3-psutil
+    state: installed
+  
+...

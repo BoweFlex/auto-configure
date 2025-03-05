@@ -1,0 +1,15 @@
+---
+
+- name: Configure Power Settings
+  community.general.dconf:
+    key: "/org/gnome/settings-daemon/plugins/power/{{ item.key }}"
+    value: "{{ item.value }}"
+  loop:
+    - key: sleep-inactive-battery-timeout
+      value: 600
+    - key: sleep-inactive-ac-timeout
+      value: 0
+  tags:
+    - power
+
+...

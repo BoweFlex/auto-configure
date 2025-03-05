@@ -1,9 +1,11 @@
 # Auto-configure
+
 This repository consists of two things:
 - An ansible playbook
 - a private submodule containing encrypted ssh keys
 
 ## Usage
+
 This project should allow a relatively short list of steps for setup.
 
 1. Open terminal
@@ -13,7 +15,7 @@ This project should allow a relatively short list of steps for setup.
   Installing ssh keys requires --ask-vault-pass, and I recommend using --ask-become-pass to be safe.
 
 ## Disclaimers
+
 Most, if not all of these steps, are pretty specific to my needs and configuration. You are more than welcome to fork and adjust this to your own needs, but I make no guarantees that it will work for other usernames etc without any adjustment.
 
-I tried to make sure that most of the ansible modules being used would work regardless of the linux flavor being used, however at this time this has only been tested on Pop!_OS.
-
+This is now specifically intended to work for Pop!_OS or Fedora, other Linux flavors are not guaranteed.

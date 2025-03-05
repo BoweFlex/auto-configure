@@ -1,0 +1,37 @@
+---
+
+- name: Add ppa repo for neovim unstable
+  ansible.builtin.apt_repository:
+    repo: ppa:neovim-ppa/unstable
+
+- name: Add ppa repo for helix
+  ansible.builtin.apt_repository:
+    repo: ppa:maveonair/helix-editor
+
+- name: Update repositories
+  ansible.builtin.package:
+    name: "*"
+    state: latest
+
+- name: Install other packages
+  ansible.builtin.package:
+    name:
+      - zsh # Better terminal
+      - vim 
+      - neovim # More powerful vim
+      - helix # Modal editor like vim
+      - npm # Needed for mason.nvim
+      - tmux # multiplexer for ssh and file editing
+      - fzf # Fuzzy finder, using for tmux
+      - feh # Wallpaper handler for i3
+      - alacritty # Prettier terminal
+      - picom # Compositor for i3, needed for window transparency
+      - pass # SRE Password manager
+      - ripgrep # required for telescope.nvim
+      - podman # Docker but secure
+      - ansible-lint
+      - python3-venv
+      - direnv
+    state: latest
+
+...

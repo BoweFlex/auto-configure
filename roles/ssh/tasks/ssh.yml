@@ -1,0 +1,21 @@
+---
+
+- name: Create ssh directory
+  file:
+    dest: "{{ key_dest }}"
+    state: directory
+    mode: 0700
+
+- name: Install ssh key
+  copy:
+    src: "{{ key_source }}/{{ item.name }}"
+    dest: "{{ key_dest }}"
+    mode: "{{ item.mode }}"
+  loop: "{{ keys }}"
+
+- name: Copy config file
+  copy:
+    src: "{{ key_source }}/config"
+    dest: "{{ key_dest }}"
+
+...
