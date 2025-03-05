@@ -1,0 +1,9 @@
+---
+
+- name: Configure Git
+  ansible.builtin.import_tasks: config.yml
+  tags:
+    - git
+    - git-config
+
+...

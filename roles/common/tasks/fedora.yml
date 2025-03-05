@@ -1,0 +1,25 @@
+---
+
+- name: Update repositories
+  ansible.builtin.package:
+    name: "*"
+    state: latest
+
+- name: Install other packages
+  ansible.builtin.package:
+    name:
+      - zsh # Better terminal
+      - vim-minimal
+      - neovim # More powerful vim
+      - helix # Modal editor like vim
+      - nodejs # Needed for mason.nvim, installs npm
+      - tmux # multiplexer for ssh and file editing
+      - fzf # Fuzzy finder, using for tmux
+      - alacritty # Prettier terminal
+      - ripgrep # required for telescope.nvim
+      - podman # Docker but secure
+      - direnv # Simplifies local development
+      - python3-pip
+    state: latest
+
+...

@@ -1,0 +1,21 @@
+---
+
+- name: Run Ubuntu Common
+  ansible.builtin.import_tasks: ubuntu.yml
+  when: ansible_distribution == "Pop!_OS" or ansible_distribution == "Ubuntu"
+  tags:
+    - ubuntu
+
+- name: Run Fedora Common
+  ansible.builtin.import_tasks: fedora.yml
+  when: ansible_distribution == "Fedora"
+  tags:
+    - fedora
+
+- name: Create bin Directory in User's Home
+  ansible.builtin.file:
+    path: "{{ lookup('env', 'HOME') }}/.local/bin/"
+    state: directory
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+...

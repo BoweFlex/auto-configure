@@ -1,0 +1,15 @@
+---
+
+git_config:
+  - name: pager.branch
+    value: "false"
+  - name: pager.config
+    value: "false"
+  - name: status.short
+    value: "true"
+  - name: user.name
+    value: Jonathan Bowe
+  - name: init.defaultbranch
+    value: main
+
+...

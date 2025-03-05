@@ -1,0 +1,11 @@
+---
+
+- name: Install Software
+  ansible.builtin.package:
+    name:
+      - golang
+      - make
+    state: latest
+
+...
+

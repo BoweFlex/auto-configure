@@ -1,0 +1,39 @@
+---
+
+- name: Ensure APT prereqs are installed
+  ansible.builtin.package:
+    name:
+      - git
+      - software-properties-common
+      - gpg
+      - stow
+    state: present
+  when: ansible_distribution == "Pop!_OS" or ansible_distribution == "Ubuntu"
+
+- name: Ensure Fedora prereqs are installed
+  ansible.builtin.package:
+    name:
+      - git
+      - stow
+    state: present
+  when: ansible_distribution == "Fedora"
+
+- name: Pull down dotfiles and subdirectories
+  become_user: "{{ user_name }}"
+  ansible.builtin.git:
+    repo: git@github.com:BoweFlex/.dotfiles.git
+    version: main
+    dest: "{{ lookup('env', 'HOME') }}/.dotfiles"
+    recursive: yes
+    update: yes
+    accept_hostkey: yes
+    key_file: "{{ lookup('env', 'HOME') }}/.ssh/boweflex_ed25519"
+
+- name: Ensure dotfiles is Owned by Correct User
+  ansible.builtin.file:
+    path: "{{ lookup('env', 'HOME') }}/.dotfiles"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+    recurse: true
+
+...

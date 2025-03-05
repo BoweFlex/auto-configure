@@ -1,0 +1,9 @@
+---
+
+- name: ZSH installation
+  become: true
+  ansible.builtin.import_tasks: zsh.yml
+  tags:
+    - zsh 
+
+...

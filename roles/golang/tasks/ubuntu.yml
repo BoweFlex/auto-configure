@@ -1,0 +1,34 @@
+---
+
+- name: Check if golang is installed
+  stat:
+    path: /usr/local/go/VERSION
+  register: version_file
+
+- name: Block to check if golang is correct version
+  block:
+    - name: Read file contents
+      set_fact: 
+        contents: "{{ lookup('ansible.builtin.file', '/usr/local/go/VERSION') }}"
+    - name: Check if version matches var
+      set_fact: go_correct_version={{ contents | regex_findall(go_version) | first }}
+      ignore_errors: yes # This fails if the correct version is not found, which is expected
+  when: version_file.stat.exists
+
+- name: Block - Install golang if not already up to date
+  block:
+    - name: Remove existing go installation
+      command: rm -rf /usr/local/go
+
+    - name: Download go tar file
+      command: wget https://go.dev/dl/go{{go_version}}.linux-amd64.tar.gz
+
+    - name: Extract and move new go folder to /usr/local
+      command: tar -C /usr/local -xzf go{{go_version}}.linux-amd64.tar.gz
+      become: true
+
+    - name: Delete downloaded go tar file
+      shell: rm -rf go{{go_version}}.linux-amd64.tar.gz*
+  when: go_correct_version is not defined or not version_file.stat.exists 
+
+...
