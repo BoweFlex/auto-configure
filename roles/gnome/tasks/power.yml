@@ -9,5 +9,7 @@
       value: 600
     - key: sleep-inactive-ac-timeout
       value: 0
+  tags:
+    - power
 
 ...
