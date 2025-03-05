@@ -1,0 +1,24 @@
+---
+
+- name: Install Software
+  dnf:
+    name:
+      # needed for chsh
+      - util-linux
+      - zsh
+  register: zsh_install
+
+- name: Change user's shell to zsh
+  user:
+    name: "{{ user_name }}"
+    shell: /usr/bin/zsh
+
+- name: Install oh-my-zsh
+  become_user: "{{ user_name }}"
+  git:
+    repo: https://github.com/ohmyzsh/ohmyzsh.git
+    dest: "{{ lookup('env', 'HOME') }}/.oh-my-zsh"
+    depth: 1
+  when: zsh_install.changed
+
+...

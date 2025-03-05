@@ -1,0 +1,31 @@
+---
+
+- name: DNF Install GOPLS
+  ansible.builtin.package:
+    name:
+      - gopls # This is used to keep version consistent with dnf's version of golang
+  when: ansible_distribution == "Fedora"
+
+- name: Ubuntu Install GOPLS
+  ansible.builtin.command:
+    argv:
+    - go
+    - install
+    - golang.org/x/tools/gopls
+  when: ansible_distribution == "Pop!_OS" or ansible_distribution == "Ubuntu"
+
+- name: Pip Install Python LSPs
+  ansible.builtin.pip:
+    name: 
+      - python-lsp-server
+      - ruff # Also available via DNF, but version is older
+
+- name: Install Markdown LSP (Marksman)
+  become_user: "{{ user_name }}"
+  ansible.builtin.get_url:
+    url: "https://github.com/artempyanykh/marksman/releases/download/2024-12-18/marksman-linux-x64"
+    dest: "{{ lookup('env', 'HOME') }}/.local/bin/marksman"
+    mode: "+x"
+
+...
+  

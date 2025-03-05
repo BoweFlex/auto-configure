@@ -1,0 +1,19 @@
+---
+
+- name: Ubuntu Golang installation
+  become_user: "{{ user_name }}"
+  ansible.builtin.import_tasks: ubuntu.yml
+  when: ansible_distribution == "Pop!_OS" or ansible_distribution == "Ubuntu"
+  tags:
+    - install
+    - golang 
+
+- name: Fedora Golang installation
+  become: true
+  ansible.builtin.import_tasks: fedora.yml
+  when: ansible_distribution == "Fedora"
+  tags:
+    - install
+    - golang 
+
+...

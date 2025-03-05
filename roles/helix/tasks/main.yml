@@ -1,0 +1,10 @@
+---
+
+- name: Install Helix LSPs
+  become: true
+  ansible.builtin.import_tasks: lsp.yml
+  tags:
+    - helix
+    - lsp
+
+...

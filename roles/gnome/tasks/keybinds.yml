@@ -1,0 +1,12 @@
+---
+
+- name: Configure Workspace Keybinds
+  ansible.builtin.include_tasks: workspace.yml
+  loop: "{{ range(0, 10) | list }}" # Endpoint is excluded, looping from 1-9
+  loop_control:
+    loop_var: workspace_num
+  tags:
+    - keybinds
+    - workspace
+
+...

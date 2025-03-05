@@ -1,0 +1,16 @@
+---
+
+- name: Clone Dotfiles
+  become: true
+  ansible.builtin.import_tasks: dotfiles.yml
+  tags:
+    - dotfiles
+
+- name: Configure Stow for Dotfiles
+  become_user: "{{ user_name }}"
+  ansible.builtin.import_tasks: stow.yml
+  tags:
+    - dotfiles
+    - stow
+
+...
