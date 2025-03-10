@@ -1,0 +1,22 @@
+---
+
+- name: Configure Workspace Keybinds
+  ansible.builtin.include_tasks: keybinds.yml
+  loop: "{{ range(0, 10) | list }}" # Endpoint is excluded, looping from 1-9
+  loop_control:
+    loop_var: workspace_num
+  tags:
+    - keybinds
+    - workspace
+
+- name: Configure Number of Workspaces
+  community.general.dconf:
+    key: "/org/gnome/desktop/wm/preferences/num-workspaces"
+    value: "9"
+
+- name: Disable Dynamic Workspaces
+  community.general.dconf:
+    key: "/org/gnome/mutter/dynamic-workspaces"
+    value: "false"
+
+...

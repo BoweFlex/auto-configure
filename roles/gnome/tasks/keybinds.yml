@@ -1,12 +1,18 @@
 ---
 
 - name: Configure Workspace Keybinds
-  ansible.builtin.include_tasks: workspace.yml
-  loop: "{{ range(0, 10) | list }}" # Endpoint is excluded, looping from 1-9
-  loop_control:
-    loop_var: workspace_num
-  tags:
-    - keybinds
-    - workspace
+  community.general.dconf:
+    key: "/org/gnome/desktop/wm/keybindings/{{ item.action }}-to-workspace-{{ workspace_num }}"
+    value: "{{ item.keybind }}"
+  loop:
+    - action: move
+      keybind: "['<Shift><Super>{{ workspace_num }}']"
+    - action: switch
+      keybind: "['<Super>{{ workspace_num }}']"
+
+- name: Remove Redundant Keybinds
+  community.general.dconf:
+    key: "/org/gnome/shell/keybindings/switch-to-application-{{ workspace_num }}"
+    value: "['']"
 
 ...

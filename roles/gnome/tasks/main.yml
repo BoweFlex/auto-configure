@@ -6,11 +6,13 @@
     - dconf
 
 - name: Import Custom Keybind Setup
-  ansible.builtin.import_tasks: keybinds.yml
+  become_user: "{{ user_name }}"
+  ansible.builtin.import_tasks: workspaces.yml
   tags:
     - dconf
 
 - name: Import Custom Power Settings
+  become_user: "{{ user_name }}"
   ansible.builtin.import_tasks: power.yml
   tags:
     - dconf
