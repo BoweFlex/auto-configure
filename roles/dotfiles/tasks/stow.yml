@@ -7,6 +7,7 @@
   loop:
     - "{{ lookup('env', 'HOME') }}/.fonts"
     - "{{ lookup('env', 'HOME') }}/.config/alacritty"
+    - "{{ lookup('env', 'HOME') }}/.config/fontconfig"
     - "{{ lookup('env', 'HOME') }}/.config/picom"
     - "{{ lookup('env', 'HOME') }}/.config/helix"
 
@@ -19,6 +20,7 @@
     - { package: "picom", target: "{{ lookup('env', 'HOME') }}/.config/picom/" }
     - { package: "tmux", target: "{{ lookup('env', 'HOME') }}" }
     - { package: "fonts", target: "{{ lookup('env', 'HOME') }}/.fonts" }
+    - { package: "fontconfig", target: "{{ lookup('env', 'HOME') }}/.config/fontconfig"}
     - { package: "helix", target: "{{ lookup('env', 'HOME') }}/.config/helix" }
 
 ...
