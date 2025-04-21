@@ -19,3 +19,11 @@ This project should allow a relatively short list of steps for setup.
 Most, if not all of these steps, are pretty specific to my needs and configuration. You are more than welcome to fork and adjust this to your own needs, but I make no guarantees that it will work for other usernames etc without any adjustment.
 
 This is now specifically intended to work for Pop!_OS or Fedora, other Linux flavors are not guaranteed.
+
+## TODO
+
+- Install fd
+    - On Ubuntu, this will require installing fd-find and then creating a symlink to fdfind
+- Install Wezterm
+    - This will require downloading a tarball for fedora, and installing a deb repo for ubuntu
+    - I'll then also need to add the step to stow the wezterm files and create the directory for it.
