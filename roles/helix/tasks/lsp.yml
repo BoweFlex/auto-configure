@@ -14,6 +14,45 @@
     - golang.org/x/tools/gopls
   when: ansible_distribution == "Pop!_OS" or ansible_distribution == "Ubuntu"
 
+- name: Fedora Install Terraform-ls
+  block:
+    - name: Add Hashicorp Repository
+      ansible.builtin.yum_repository:
+        name: hashicorp
+        baseurl: https://rpm.releases.hashicorp.com/fedora/$releasever/$basearch/stable
+        enabled: true
+        gpgcheck: true
+        gpgkey: https://rpm.releases.hashicorp.com/gpgfedora/hashicorp.repo
+
+    - name: Install Terraform-ls
+      ansible.builtin.package:
+        name: terraform-ls
+        state: present
+  when: ansible_distribution == "Fedora"
+
+- name: Ubuntu Install Terraform-ls
+  block:
+    - name: Add Apt Key for Hashicorp
+      ansible.builtin.shell: curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --yes --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+
+    - name: Confirm Permissions for Apt Key
+      ansible.builtin.file:
+        path: /usr/share/keyrings/hashicorp-archive-keyring.gpg
+        mode: "0644"
+
+    - name: Add Apt Repository for Hashicorp
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com * *"
+        filename: hashicorp
+        state: present
+        update_cache: true
+
+    - name: Install Terraform-ls
+      ansible.builtin.package:
+        name: terraform-ls
+        state: present
+  when: ansible_distribution == "Pop!_OS" or ansible_distribution == "Ubuntu"
+
 - name: Pip Install Python LSPs
   ansible.builtin.pip:
     name: 
@@ -27,5 +66,11 @@
     dest: "{{ lookup('env', 'HOME') }}/.local/bin/marksman"
     mode: "+x"
 
-...
-  
+- name: Install Jsonnet LSP
+  become_user: "{{ user_name }}"
+  ansible.builtin.get_url:
+    url: "https://github.com/grafana/jsonnet-language-server/releases/download/v0.15.0/jsonnet-language-server_0.15.0_linux_amd64"
+    dest: "{{ lookup('env', 'HOME') }}/.local/bin/jsonnet-language-server"
+    mode: "+x"
+
+...  
