@@ -1,0 +1,14 @@
+[user]
+    name = {{ git_config.user.name | d("Jonathan Bowe") }}
+    email = {{ git_config.user.email | d("jonathan@bowedev.com") }}
+[init]
+    defaultBranch = {{ git_config.init.defaultBranch | d("main") }}
+[pager]
+    branch = {{ git_config.pager.branch | d("false") }}
+    config = {{ git_config.pager.config | d("false") }}
+[status]
+    short = {{ git_config.status.short | d("true") }}
+{%  if git_config_work is defined %}
+[includeIf "gitdir:{{ git_config_work.dir }}/"]
+    path = {{ git_config_work.dir }}/.gitconfig-work
+{%  endif %}

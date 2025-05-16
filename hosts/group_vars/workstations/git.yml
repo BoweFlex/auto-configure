@@ -1,15 +1,22 @@
 ---
 
 git_config:
-  - name: pager.branch
-    value: "false"
-  - name: pager.config
-    value: "false"
-  - name: status.short
-    value: "true"
-  - name: user.name
-    value: Jonathan Bowe
-  - name: init.defaultbranch
-    value: main
+  user:
+    name: Jonathan Bowe
+    email: jonathan@bowedev.com
+  init:
+    defaultBranch: main
+  pager:
+    branch: "false"
+    config: "false"
+  status:
+    short: "true"
+
+# This can be uncommented to create workdir/.gitconfig-work, which will be used for any directory under workdir
+# git_config_work:
+#   dir: /path/to/work/dir
+#   user:
+#     name: Jonathan Bowe
+#     email: <work email>
 
 ...

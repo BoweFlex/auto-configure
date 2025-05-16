@@ -1,10 +1,21 @@
 ---
 
+# This could potentially be improved by looping over keys in git_config,
+# creating the [] entry for that key and defining each kv pair defined in that key,
+# but I'm not sure it's worth the extra time right now.
 - name: Set Global Config
-  git_config:
-    name: "{{ item.name }}"
-    scope: global
-    value: "{{ item.value }}"
-  loop: "{{ git_config }}"
+  ansible.builtin.template:
+    src: gitconfig.j2
+    dest: "{{ lookup('env', 'HOME') }}/.gitconfig"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+
+- name: Set Work Config
+  when: git_config_work is defined
+  ansible.builtin.template:
+    src: gitconfig-work.j2
+    dest: "{{ git_config_work.dir }}/.gitconfig-work"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
 
 ...
