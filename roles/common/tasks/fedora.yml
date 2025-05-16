@@ -1,5 +1,10 @@
 ---
 
+- name: Add Wezterm Copr Repository
+  community.general.copr:
+    name: wezfurlong/wezterm-nightly
+    state: enabled
+
 - name: Update repositories
   ansible.builtin.package:
     name: "*"
@@ -10,6 +15,8 @@
     name:
       - zsh # Better terminal
       - vim-minimal
+      - fd
+      - wezterm # Terminal emulator with built in multiplexing
       - neovim # More powerful vim
       - helix # Modal editor like vim
       - nodejs # Needed for mason.nvim, installs npm

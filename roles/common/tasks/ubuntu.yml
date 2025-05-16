@@ -1,5 +1,21 @@
 ---
 
+- name: Wezterm Apt Repository
+  block:
+    - name: Add Apt Key for Wezterm
+      ansible.builtin.shell: curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
+
+    - name: Confirm Permissions for Apt Key
+      ansible.builtin.file:
+        path: /usr/share/keyrings/wezterm-fury.gpg
+        mode: "0644"
+
+    - name: Add Apt Repository for Wezterm
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *"
+        filename: wezterm
+        state: present
+
 - name: Add ppa repo for neovim unstable
   ansible.builtin.apt_repository:
     repo: ppa:neovim-ppa/unstable
@@ -18,6 +34,8 @@
     name:
       - zsh # Better terminal
       - vim 
+      - wezterm-nightly # Terminal Emulator with builtin multiplexing
+      - fd-find # "Better" find
       - neovim # More powerful vim
       - helix # Modal editor like vim
       - npm # Needed for mason.nvim
@@ -33,5 +51,13 @@
       - python3-venv
       - direnv
     state: latest
+
+- name: Create Symlink for Fd
+  ansible.builtin.file:
+    src: /usr/bin/fdfind
+    dest: /usr/bin/fd
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+    state: link
 
 ...

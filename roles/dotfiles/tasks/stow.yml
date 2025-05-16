@@ -10,6 +10,7 @@
     - "{{ lookup('env', 'HOME') }}/.config/fontconfig"
     - "{{ lookup('env', 'HOME') }}/.config/picom"
     - "{{ lookup('env', 'HOME') }}/.config/helix"
+    - "{{ lookup('env', 'HOME') }}/.config/wezterm"
 
 - name: Stow config files
   shell: "stow {{ item.package }} -d {{ lookup('env', 'HOME') }}/.dotfiles -t {{ item.target }}"
@@ -22,5 +23,6 @@
     - { package: "fonts", target: "{{ lookup('env', 'HOME') }}/.fonts" }
     - { package: "fontconfig", target: "{{ lookup('env', 'HOME') }}/.config/fontconfig"}
     - { package: "helix", target: "{{ lookup('env', 'HOME') }}/.config/helix" }
+    - { package: "wezterm", target: "{{ lookup('env', 'HOME') }}/.config/wezterm/" }
 
 ...
