@@ -5,12 +5,14 @@
   when: ansible_distribution == "Pop!_OS" or ansible_distribution == "Ubuntu"
   tags:
     - ubuntu
+    - common
 
 - name: Run Fedora Common
   ansible.builtin.import_tasks: fedora.yml
   when: ansible_distribution == "Fedora"
   tags:
     - fedora
+    - common
 
 - name: Create bin Directory in User's Home
   ansible.builtin.file:
@@ -18,4 +20,13 @@
     state: directory
     owner: "{{ user_name }}"
     group: "{{ user_name }}"
+  tags:
+    - common
+
+- name: Enable Passwordless Sudo for User
+  ansible.builtin.template:
+    src: sudoer.j2
+    dest: "/etc/sudoers.d/{{ user_name }}-user"
+  tags:
+    - common
 ...
