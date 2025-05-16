@@ -22,8 +22,3 @@ This is now specifically intended to work for Pop!_OS or Fedora, other Linux fla
 
 ## TODO
 
-- Install fd
-    - On Ubuntu, this will require installing fd-find and then creating a symlink to fdfind
-- Install Wezterm
-    - This will require downloading a tarball for fedora, and installing a deb repo for ubuntu
-    - I'll then also need to add the step to stow the wezterm files and create the directory for it.
