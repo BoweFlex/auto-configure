@@ -7,6 +7,6 @@
       - dbus
       - dbus-tools
       - python3-psutil
-    state: installed
+    state: present
   
 ...
