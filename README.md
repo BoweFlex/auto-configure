@@ -22,6 +22,8 @@ This is now specifically intended to work for Pop!_OS or Fedora, other Linux fla
 
 ## TODO
 
+- Add Zen install
 - Add Zellij install
 - Add gitlab dotfiles
 - Clean up unused packages and configuration?
+    - This probably includes LSP installs, I think we can just let Mason handle this
